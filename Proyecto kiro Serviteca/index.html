@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SERVITECA ADSO</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Iconos Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+
+  <!-- ======================== PANTALLA DE LOGIN ======================== -->
+  <div id="screen-login" class="screen active">
+    <div class="login-wrapper">
+      <div class="login-brand">
+        <div class="login-logo">
+          <i class="fas fa-car-side"></i>
+        </div>
+        <h1>SERVITECA ADSO</h1>
+        <p>Sistema de Gestión Automotriz</p>
+      </div>
+      <div class="login-card">
+        <h2><i class="fas fa-lock"></i> Iniciar Sesión</h2>
+        <div id="login-error" class="alert alert-danger hidden"></div>
+        <div class="form-group">
+          <label for="login-username"><i class="fas fa-user"></i> Usuario</label>
+          <input type="text" id="login-username" placeholder="Ingrese su usuario" autocomplete="username" />
+        </div>
+        <div class="form-group">
+          <label for="login-password"><i class="fas fa-key"></i> Contraseña</label>
+          <div class="input-password-wrap">
+            <input type="password" id="login-password" placeholder="Ingrese su contraseña" autocomplete="current-password" />
+            <button type="button" class="btn-toggle-pass" onclick="togglePassword()" title="Mostrar/ocultar contraseña">
+              <i class="fas fa-eye" id="toggle-pass-icon"></i>
+            </button>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-block" onclick="iniciarSesion()">
+          <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+        </button>
+        <div class="login-hint">
+          <small><i class="fas fa-info-circle"></i> Usuario: <strong>admin</strong> &nbsp;|&nbsp; Contraseña: <strong>admin123</strong></small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== APLICACIÓN PRINCIPAL ======================== -->
+  <div id="screen-app" class="screen hidden">
+
+    <!-- SIDEBAR -->
+    <nav id="sidebar" class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <i class="fas fa-car-side"></i>
+        </div>
+        <div class="sidebar-title">
+          <span class="title-main">SERVITECA</span>
+          <span class="title-sub">ADSO</span>
+        </div>
+        <button class="btn-sidebar-close" onclick="toggleSidebar()" title="Cerrar menú">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="sidebar-user">
+        <div class="user-avatar"><i class="fas fa-user-circle"></i></div>
+        <div class="user-info">
+          <span id="sidebar-username" class="user-name">Administrador</span>
+          <span class="user-role">Gestor del sistema</span>
+        </div>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="menu-section-label">Módulos</li>
+        <li>
+          <a href="#" class="menu-item active" data-module="dashboard" onclick="navegarA('dashboard')">
+            <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="menu-item" data-module="clientes" onclick="navegarA('clientes')">
+            <i class="fas fa-users"></i><span>Clientes</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="menu-item" data-module="carros" onclick="navegarA('carros')">
+            <i class="fas fa-car"></i><span>Carros</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="menu-item" data-module="servicios" onclick="navegarA('servicios')">
+            <i class="fas fa-wrench"></i><span>Servicios</span>
+          </a>
+        </li>
+        <li class="menu-section-label">General</li>
+        <li>
+          <a href="#" class="menu-item" data-module="ayuda" onclick="navegarA('ayuda')">
+            <i class="fas fa-question-circle"></i><span>Ayuda</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="menu-item menu-item-danger" onclick="cerrarSesion()">
+            <i class="fas fa-sign-out-alt"></i><span>Salir</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- OVERLAY para móvil -->
+    <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="main-content" id="main-content">
+
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <button class="btn-menu-toggle" onclick="toggleSidebar()" title="Menú">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="topbar-title" id="topbar-title">Dashboard</div>
+        <div class="topbar-actions">
+          <span class="topbar-user"><i class="fas fa-user-circle"></i> <span id="topbar-username">admin</span></span>
+          <button class="btn btn-danger btn-sm" onclick="cerrarSesion()" title="Cerrar sesión">
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- =============== MÓDULO: DASHBOARD =============== -->
+      <section id="mod-dashboard" class="module active">
+        <div class="page-header">
+          <h2><i class="fas fa-tachometer-alt"></i> Panel Principal</h2>
+          <p>Resumen general del sistema de gestión</p>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card stat-blue">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
+            <div class="stat-info">
+              <span class="stat-number" id="stat-clientes">0</span>
+              <span class="stat-label">Clientes Registrados</span>
+            </div>
+          </div>
+          <div class="stat-card stat-green">
+            <div class="stat-icon"><i class="fas fa-car"></i></div>
+            <div class="stat-info">
+              <span class="stat-number" id="stat-carros">0</span>
+              <span class="stat-label">Carros Registrados</span>
+            </div>
+          </div>
+          <div class="stat-card stat-orange">
+            <div class="stat-icon"><i class="fas fa-wrench"></i></div>
+            <div class="stat-info">
+              <span class="stat-number" id="stat-servicios">0</span>
+              <span class="stat-label">Servicios Realizados</span>
+            </div>
+          </div>
+          <div class="stat-card stat-red">
+            <div class="stat-icon"><i class="fas fa-oil-can"></i></div>
+            <div class="stat-info">
+              <span class="stat-number" id="stat-hoy">0</span>
+              <span class="stat-label">Servicios Hoy</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="dashboard-card" onclick="navegarA('clientes')">
+            <div class="dash-card-icon blue"><i class="fas fa-users"></i></div>
+            <h3>Clientes</h3>
+            <p>Registrar, consultar y listar los clientes de la serviteca.</p>
+            <span class="dash-card-link">Ir al módulo <i class="fas fa-arrow-right"></i></span>
+          </div>
+          <div class="dashboard-card" onclick="navegarA('carros')">
+            <div class="dash-card-icon green"><i class="fas fa-car"></i></div>
+            <h3>Carros</h3>
+            <p>Gestionar los vehículos asociados a los clientes.</p>
+            <span class="dash-card-link">Ir al módulo <i class="fas fa-arrow-right"></i></span>
+          </div>
+          <div class="dashboard-card" onclick="navegarA('servicios')">
+            <div class="dash-card-icon orange"><i class="fas fa-wrench"></i></div>
+            <h3>Servicios</h3>
+            <p>Registrar y consultar los servicios prestados a los vehículos.</p>
+            <span class="dash-card-link">Ir al módulo <i class="fas fa-arrow-right"></i></span>
+          </div>
+          <div class="dashboard-card" onclick="navegarA('ayuda')">
+            <div class="dash-card-icon purple"><i class="fas fa-question-circle"></i></div>
+            <h3>Ayuda</h3>
+            <p>Guía de uso del sistema de gestión de la serviteca.</p>
+            <span class="dash-card-link">Ver ayuda <i class="fas fa-arrow-right"></i></span>
+          </div>
+        </div>
+
+        <!-- Últimos servicios registrados -->
+        <div class="card mt-4">
+          <div class="card-header">
+            <h3><i class="fas fa-history"></i> Últimos Servicios Registrados</h3>
+          </div>
+          <div class="card-body">
+            <div id="dashboard-ultimos-servicios">
+              <p class="text-muted text-center"><i class="fas fa-info-circle"></i> No hay servicios registrados aún.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =============== MÓDULO: CLIENTES =============== -->
+      <section id="mod-clientes" class="module hidden">
+        <div class="page-header">
+          <h2><i class="fas fa-users"></i> Módulo Clientes</h2>
+          <p>Administración de clientes de la serviteca</p>
+        </div>
+
+        <!-- Submenu Clientes -->
+        <div class="submenu-tabs">
+          <button class="tab-btn active" data-tab="cli-agregar" onclick="cambiarTab(this, 'cli-agregar')">
+            <i class="fas fa-user-plus"></i> Agregar Cliente
+          </button>
+          <button class="tab-btn" data-tab="cli-consultar" onclick="cambiarTab(this, 'cli-consultar')">
+            <i class="fas fa-search"></i> Consultar Cliente
+          </button>
+          <button class="tab-btn" data-tab="cli-listar" onclick="cambiarTab(this, 'cli-listar')">
+            <i class="fas fa-list"></i> Listar Clientes
+          </button>
+        </div>
+
+        <!-- TAB: Agregar Cliente -->
+        <div id="cli-agregar" class="tab-content active">
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-user-plus"></i> Registrar Nuevo Cliente</h3>
+            </div>
+            <div class="card-body">
+              <div id="cli-agregar-alert" class="alert hidden"></div>
+              <form id="form-cliente" onsubmit="guardarCliente(event)" novalidate>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="cli-id"><i class="fas fa-id-card"></i> Identificación <span class="required">*</span></label>
+                    <input type="text" id="cli-id" placeholder="Ej: 1234567890" maxlength="20" />
+                    <span class="field-error" id="err-cli-id"></span>
+                  </div>
+                  <div class="form-group">
+                    <label for="cli-nombres"><i class="fas fa-user"></i> Nombres <span class="required">*</span></label>
+                    <input type="text" id="cli-nombres" placeholder="Ej: Juan Carlos" maxlength="60" />
+                    <span class="field-error" id="err-cli-nombres"></span>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="cli-apellidos"><i class="fas fa-user"></i> Apellidos <span class="required">*</span></label>
+                    <input type="text" id="cli-apellidos" placeholder="Ej: Pérez García" maxlength="60" />
+                    <span class="field-error" id="err-cli-apellidos"></span>
+                  </div>
+                  <div class="form-group">
+                    <label for="cli-correo"><i class="fas fa-envelope"></i> Correo Electrónico <span class="required">*</span></label>
+                    <input type="email" id="cli-correo" placeholder="Ej: juan@correo.com" maxlength="100" />
+                    <span class="field-error" id="err-cli-correo"></span>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="cli-celular"><i class="fas fa-mobile-alt"></i> Celular <span class="required">*</span></label>
+                    <input type="tel" id="cli-celular" placeholder="Ej: 3001234567" maxlength="15" />
+                    <span class="field-error" id="err-cli-celular"></span>
+                  </div>
+                  <div class="form-group form-group-actions">
+                    <button type="submit" class="btn btn-primary btn-block-sm">
+                      <i class="fas fa-save"></i> Guardar Cliente
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-block-sm" onclick="limpiarFormCliente()">
+                      <i class="fas fa-eraser"></i> Limpiar
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: Consultar Cliente -->
+        <div id="cli-consultar" class="tab-content hidden">
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-search"></i> Consultar Cliente por Identificación</h3>
+            </div>
+            <div class="card-body">
+              <div class="search-bar">
+                <input type="text" id="cli-buscar-id" placeholder="Ingrese la identificación del cliente..." />
+                <button class="btn btn-primary" onclick="consultarCliente()">
+                  <i class="fas fa-search"></i> Buscar
+                </button>
+              </div>
+              <div id="cli-resultado-busqueda" class="mt-3"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: Listar Clientes -->
+        <div id="cli-listar" class="tab-content hidden">
+          <div class="card">
+            <div class="card-header between">
+              <h3><i class="fas fa-list"></i> Listado de Clientes</h3>
+              <span class="badge badge-primary" id="badge-clientes">0 registros</span>
+            </div>
+            <div class="card-body">
+              <div class="table-search">
+                <input type="text" id="cli-filtro" placeholder="Filtrar por nombre, apellido o identificación..." oninput="filtrarClientes()" />
+              </div>
+              <div class="table-responsive">
+                <table class="data-table" id="tabla-clientes">
+                  <thead>
+                    <tr>
+                      <th><i class="fas fa-id-card"></i> Identificación</th>
+                      <th><i class="fas fa-user"></i> Nombres</th>
+                      <th><i class="fas fa-user"></i> Apellidos</th>
+                      <th><i class="fas fa-envelope"></i> Correo</th>
+                      <th><i class="fas fa-mobile-alt"></i> Celular</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-clientes">
+                    <tr><td colspan="6" class="text-center text-muted">No hay clientes registrados.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =============== MÓDULO: CARROS =============== -->
+      <section id="mod-carros" class="module hidden">
+        <div class="page-header">
+          <h2><i class="fas fa-car"></i> Módulo Carros</h2>
+          <p>Administración de vehículos registrados</p>
+        </div>
+
+        <div class="submenu-tabs">
+          <button class="tab-btn active" data-tab="car-agregar" onclick="cambiarTab(this, 'car-agregar')">
+            <i class="fas fa-plus-circle"></i> Agregar Carro
+          </button>
+          <button class="tab-btn" data-tab="car-consultar" onclick="cambiarTab(this, 'car-consultar')">
+            <i class="fas fa-search"></i> Consultar Carro
+          </button>
+          <button class="tab-btn" data-tab="car-listar" onclick="cambiarTab(this, 'car-listar')">
+            <i class="fas fa-list"></i> Listar Carros
+          </button>
+        </div>
+
+        <!-- TAB: Agregar Carro -->
+        <div id="car-agregar" class="tab-content active">
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-plus-circle"></i> Registrar Nuevo Vehículo</h3>
+            </div>
+            <div class="card-body">
+              <div id="car-agregar-alert" class="alert hidden"></div>
+              <form id="form-carro" onsubmit="guardarCarro(event)" novalidate>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="car-placa"><i class="fas fa-id-badge"></i> Placa <span class="required">*</span></label>
+                    <input type="text" id="car-placa" placeholder="Ej: ABC123" maxlength="8" style="text-transform:uppercase" />
+                    <span class="field-error" id="err-car-placa"></span>
+                  </div>
+                  <div class="form-group">
+                    <label for="car-marca"><i class="fas fa-industry"></i> Marca <span class="required">*</span></label>
+                    <input type="text" id="car-marca" placeholder="Ej: Chevrolet, Toyota..." maxlength="40" />
+                    <span class="field-error" id="err-car-marca"></span>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="car-modelo"><i class="fas fa-calendar-alt"></i> Modelo (Año) <span class="required">*</span></label>
+                    <input type="number" id="car-modelo" placeholder="Ej: 2022" min="1950" max="2030" />
+                    <span class="field-error" id="err-car-modelo"></span>
+                  </div>
+                  <div class="form-group form-group-actions">
+                    <button type="submit" class="btn btn-primary btn-block-sm">
+                      <i class="fas fa-save"></i> Guardar Carro
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-block-sm" onclick="limpiarFormCarro()">
+                      <i class="fas fa-eraser"></i> Limpiar
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: Consultar Carro -->
+        <div id="car-consultar" class="tab-content hidden">
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-search"></i> Consultar Carro por Placa</h3>
+            </div>
+            <div class="card-body">
+              <div class="search-bar">
+                <input type="text" id="car-buscar-placa" placeholder="Ingrese la placa del vehículo..." style="text-transform:uppercase" />
+                <button class="btn btn-primary" onclick="consultarCarro()">
+                  <i class="fas fa-search"></i> Buscar
+                </button>
+              </div>
+              <div id="car-resultado-busqueda" class="mt-3"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: Listar Carros -->
+        <div id="car-listar" class="tab-content hidden">
+          <div class="card">
+            <div class="card-header between">
+              <h3><i class="fas fa-list"></i> Listado de Vehículos</h3>
+              <span class="badge badge-primary" id="badge-carros">0 registros</span>
+            </div>
+            <div class="card-body">
+              <div class="table-search">
+                <input type="text" id="car-filtro" placeholder="Filtrar por placa, marca o modelo..." oninput="filtrarCarros()" />
+              </div>
+              <div class="table-responsive">
+                <table class="data-table" id="tabla-carros">
+                  <thead>
+                    <tr>
+                      <th><i class="fas fa-id-badge"></i> Placa</th>
+                      <th><i class="fas fa-industry"></i> Marca</th>
+                      <th><i class="fas fa-calendar-alt"></i> Modelo</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-carros">
+                    <tr><td colspan="4" class="text-center text-muted">No hay vehículos registrados.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =============== MÓDULO: SERVICIOS =============== -->
+      <section id="mod-servicios" class="module hidden">
+        <div class="page-header">
+          <h2><i class="fas fa-wrench"></i> Módulo Servicios</h2>
+          <p>Registro y consulta de servicios prestados</p>
+        </div>
+
+        <div class="submenu-tabs">
+          <button class="tab-btn active" data-tab="srv-agregar" onclick="cambiarTab(this, 'srv-agregar')">
+            <i class="fas fa-plus-circle"></i> Agregar Servicio
+          </button>
+          <button class="tab-btn" data-tab="srv-consultar" onclick="cambiarTab(this, 'srv-consultar')">
+            <i class="fas fa-search"></i> Consultar Servicios
+          </button>
+          <button class="tab-btn" data-tab="srv-listar" onclick="cambiarTab(this, 'srv-listar')">
+            <i class="fas fa-list"></i> Listar Servicios
+          </button>
+        </div>
+
+        <!-- TAB: Agregar Servicio -->
+        <div id="srv-agregar" class="tab-content active">
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-plus-circle"></i> Registrar Nuevo Servicio</h3>
+            </div>
+            <div class="card-body">
+              <div id="srv-agregar-alert" class="alert hidden"></div>
+              <form id="form-servicio" onsubmit="guardarServicio(event)" novalidate>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="srv-placa"><i class="fas fa-car"></i> Placa del Carro <span class="required">*</span></label>
+                    <input type="text" id="srv-placa" placeholder="Ej: ABC123" maxlength="8" style="text-transform:uppercase" oninput="verificarCarroEnServicio()" />
+                    <span class="field-error" id="err-srv-placa"></span>
+                    <span class="field-ok" id="ok-srv-placa"></span>
+                  </div>
+                  <div class="form-group">
+                    <label for="srv-cliente-id"><i class="fas fa-id-card"></i> Identificación del Cliente <span class="required">*</span></label>
+                    <input type="text" id="srv-cliente-id" placeholder="Ej: 1234567890" maxlength="20" oninput="verificarClienteEnServicio()" />
+                    <span class="field-error" id="err-srv-cliente-id"></span>
+                    <span class="field-ok" id="ok-srv-cliente-id"></span>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="srv-fecha"><i class="fas fa-calendar-alt"></i> Fecha del Servicio <span class="required">*</span></label>
+                    <input type="date" id="srv-fecha" />
+                    <span class="field-error" id="err-srv-fecha"></span>
+                  </div>
+                  <div class="form-group">
+                    <label for="srv-tipo"><i class="fas fa-tools"></i> Tipo de Servicio <span class="required">*</span></label>
+                    <select id="srv-tipo">
+                      <option value="">-- Seleccione un servicio --</option>
+                      <option value="Cambio de Aceite">🛢️ Cambio de Aceite</option>
+                      <option value="Sincronización">⚙️ Sincronización</option>
+                      <option value="Alineación">🔧 Alineación</option>
+                      <option value="Lavado">🚿 Lavado</option>
+                    </select>
+                    <span class="field-error" id="err-srv-tipo"></span>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group form-group-actions">
+                    <button type="submit" class="btn btn-primary btn-block-sm">
+                      <i class="fas fa-save"></i> Guardar Servicio
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-block-sm" onclick="limpiarFormServicio()">
+                      <i class="fas fa-eraser"></i> Limpiar
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: Consultar Servicios por Placa -->
+        <div id="srv-consultar" class="tab-content hidden">
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-search"></i> Consultar Servicios por Placa del Vehículo</h3>
+            </div>
+            <div class="card-body">
+              <div class="search-bar">
+                <input type="text" id="srv-buscar-placa" placeholder="Ingrese la placa del vehículo..." style="text-transform:uppercase" />
+                <button class="btn btn-primary" onclick="consultarServiciosPorPlaca()">
+                  <i class="fas fa-search"></i> Buscar
+                </button>
+              </div>
+              <div id="srv-resultado-busqueda" class="mt-3"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: Listar Servicios -->
+        <div id="srv-listar" class="tab-content hidden">
+          <div class="card">
+            <div class="card-header between">
+              <h3><i class="fas fa-list"></i> Listado de Servicios</h3>
+              <span class="badge badge-primary" id="badge-servicios">0 registros</span>
+            </div>
+            <div class="card-body">
+              <div class="table-search">
+                <input type="text" id="srv-filtro" placeholder="Filtrar por placa, tipo de servicio o fecha..." oninput="filtrarServicios()" />
+              </div>
+              <div class="table-responsive">
+                <table class="data-table" id="tabla-servicios">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th><i class="fas fa-car"></i> Placa</th>
+                      <th><i class="fas fa-id-card"></i> Cliente ID</th>
+                      <th><i class="fas fa-calendar"></i> Fecha</th>
+                      <th><i class="fas fa-tools"></i> Tipo de Servicio</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-servicios">
+                    <tr><td colspan="6" class="text-center text-muted">No hay servicios registrados.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =============== MÓDULO: AYUDA =============== -->
+      <section id="mod-ayuda" class="module hidden">
+        <div class="page-header">
+          <h2><i class="fas fa-question-circle"></i> Ayuda del Sistema</h2>
+          <p>Guía de uso de SERVITECA ADSO</p>
+        </div>
+
+        <div class="help-grid">
+          <div class="help-card">
+            <div class="help-icon blue"><i class="fas fa-user-plus"></i></div>
+            <h3>Cómo Registrar Clientes</h3>
+            <ol>
+              <li>Vaya al módulo <strong>Clientes</strong> en el menú lateral.</li>
+              <li>Seleccione la pestaña <strong>Agregar Cliente</strong>.</li>
+              <li>Complete todos los campos obligatorios: identificación, nombres, apellidos, correo y celular.</li>
+              <li>Haga clic en <strong>Guardar Cliente</strong>.</li>
+              <li>Recibirá una confirmación de registro exitoso.</li>
+            </ol>
+            <div class="help-tip"><i class="fas fa-lightbulb"></i> <strong>Tip:</strong> La identificación es única. No puede registrar dos clientes con la misma.</div>
+          </div>
+
+          <div class="help-card">
+            <div class="help-icon green"><i class="fas fa-car"></i></div>
+            <h3>Cómo Registrar Carros</h3>
+            <ol>
+              <li>Vaya al módulo <strong>Carros</strong> en el menú lateral.</li>
+              <li>Seleccione la pestaña <strong>Agregar Carro</strong>.</li>
+              <li>Ingrese la placa, marca y modelo (año) del vehículo.</li>
+              <li>Haga clic en <strong>Guardar Carro</strong>.</li>
+              <li>Recibirá confirmación del registro.</li>
+            </ol>
+            <div class="help-tip"><i class="fas fa-lightbulb"></i> <strong>Tip:</strong> La placa es el identificador único del vehículo y se convierte automáticamente a mayúsculas.</div>
+          </div>
+
+          <div class="help-card">
+            <div class="help-icon orange"><i class="fas fa-wrench"></i></div>
+            <h3>Cómo Registrar Servicios</h3>
+            <ol>
+              <li>Vaya al módulo <strong>Servicios</strong>.</li>
+              <li>Seleccione la pestaña <strong>Agregar Servicio</strong>.</li>
+              <li>Ingrese la placa del carro (debe existir previamente).</li>
+              <li>Ingrese la identificación del cliente (debe existir previamente).</li>
+              <li>Seleccione la fecha y el tipo de servicio.</li>
+              <li>Haga clic en <strong>Guardar Servicio</strong>.</li>
+            </ol>
+            <div class="help-tip"><i class="fas fa-lightbulb"></i> <strong>Tip:</strong> El carro y el cliente deben estar registrados antes de crear un servicio.</div>
+          </div>
+
+          <div class="help-card">
+            <div class="help-icon purple"><i class="fas fa-search"></i></div>
+            <h3>Cómo Consultar Información</h3>
+            <ol>
+              <li>Para buscar un <strong>cliente</strong>: Vaya a Clientes → Consultar Cliente → ingrese la identificación.</li>
+              <li>Para buscar un <strong>carro</strong>: Vaya a Carros → Consultar Carro → ingrese la placa.</li>
+              <li>Para buscar servicios de un <strong>vehículo</strong>: Vaya a Servicios → Consultar Servicios → ingrese la placa.</li>
+            </ol>
+            <div class="help-tip"><i class="fas fa-lightbulb"></i> <strong>Tip:</strong> En la consulta de servicios verá el historial completo de mantenimiento del vehículo.</div>
+          </div>
+
+          <div class="help-card">
+            <div class="help-icon red"><i class="fas fa-list-alt"></i></div>
+            <h3>Cómo Listar Registros</h3>
+            <ol>
+              <li>Dentro de cada módulo, seleccione la pestaña <strong>Listar</strong>.</li>
+              <li>Se mostrará una tabla con todos los registros.</li>
+              <li>Use el campo de búsqueda para filtrar los resultados en tiempo real.</li>
+              <li>Puede eliminar registros usando el botón rojo en cada fila.</li>
+            </ol>
+            <div class="help-tip"><i class="fas fa-lightbulb"></i> <strong>Tip:</strong> Los datos se guardan automáticamente en su navegador y persisten aunque cierre la página.</div>
+          </div>
+
+          <div class="help-card">
+            <div class="help-icon gray"><i class="fas fa-database"></i></div>
+            <h3>Almacenamiento de Datos</h3>
+            <p>Esta aplicación utiliza <strong>LocalStorage</strong> del navegador para guardar los datos.</p>
+            <ul>
+              <li>Los datos persisten al cerrar y reabrir el navegador.</li>
+              <li>Los datos son locales a este dispositivo y navegador.</li>
+              <li>No requiere conexión a internet ni servidor externo.</li>
+            </ul>
+            <div class="help-tip"><i class="fas fa-exclamation-triangle"></i> <strong>Nota:</strong> Si limpia los datos del navegador, se perderán los registros.</div>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /main-content -->
+  </div><!-- /screen-app -->
+
+  <!-- ======================== MODAL DE CONFIRMACIÓN ======================== -->
+  <div id="modal-confirm" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-icon"><i class="fas fa-exclamation-triangle"></i></div>
+      <h3 id="modal-title">¿Confirmar acción?</h3>
+      <p id="modal-message">¿Está seguro de que desea realizar esta acción?</p>
+      <div class="modal-actions">
+        <button class="btn btn-danger" id="modal-btn-confirm" onclick="modalConfirmar()">
+          <i class="fas fa-check"></i> Confirmar
+        </button>
+        <button class="btn btn-secondary" onclick="cerrarModal()">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== TOAST NOTIFICATIONS ======================== -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
